@@ -87,6 +87,19 @@ export default function App() {
     type: "individual",
   });
 
+  // Custom pin position conflict state
+  const [pinConflictState, setPinConflictState] = useState<{
+    isOpen: boolean;
+    position: number;
+    currentTemplateName: string;
+    occupyingTemplateName: string;
+  }>({
+    isOpen: false,
+    position: 1,
+    currentTemplateName: "",
+    occupyingTemplateName: "",
+  });
+
   // User input states (Auth modal)
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -338,6 +351,26 @@ export default function App() {
   // Action: Toggle Pin state
   const handleTogglePin = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    const currentTemplate = templates.find((t) => t.id === id);
+    if (!currentTemplate) return;
+
+    if (!currentTemplate.pinned) {
+      // Trying to pin it
+      const targetPos = currentTemplate.pinPosition || 1;
+      const occupying = templates.find(
+        (t) => t.id !== id && t.pinned && (t.pinPosition === targetPos || (!t.pinPosition && targetPos === 1))
+      );
+      if (occupying) {
+        setPinConflictState({
+          isOpen: true,
+          position: targetPos,
+          currentTemplateName: currentTemplate.title || "Plantilla sin título",
+          occupyingTemplateName: occupying.title || "Plantilla sin título"
+        });
+        return;
+      }
+    }
+
     const updated = templates.map((t) => {
       if (t.id === id) {
         const nextPinned = !t.pinned;
@@ -359,6 +392,21 @@ export default function App() {
   // Action: Set specific Pin Position
   const handleSetPinPosition = (id: string, position: number, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    const currentTemplate = templates.find((t) => t.id === id);
+    if (!currentTemplate) return;
+
+    const occupying = templates.find(
+      (t) => t.id !== id && t.pinned && (t.pinPosition === position || (!t.pinPosition && position === 1))
+    );
+    if (occupying) {
+      setPinConflictState({
+        isOpen: true,
+        position: position,
+        currentTemplateName: currentTemplate.title || "Plantilla sin título",
+        occupyingTemplateName: occupying.title || "Plantilla sin título"
+      });
+      return;
+    }
     const updated = templates.map((t) =>
       t.id === id ? { ...t, pinned: true, pinPosition: position } : t
     );
@@ -1587,6 +1635,59 @@ export default function App() {
                     <span>Eliminar</span>
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL: PIN POSITION CONFLICT WARNING */}
+      <AnimatePresence>
+        {pinConflictState.isOpen && (
+          <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+            <motion.div
+              id="pin-position-conflict-modal"
+              initial={{ scale: 0.6, y: 60, opacity: 0 }}
+              animate={{ 
+                scale: 1, 
+                y: 0, 
+                opacity: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 420,
+                  damping: 14,
+                  mass: 0.95
+                }
+              }}
+              exit={{ scale: 0.7, y: 30, opacity: 0, transition: { duration: 0.15 } }}
+              className="bg-[#121216] border border-amber-500/30 max-w-sm w-full rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(245,158,11,0.25)] relative"
+            >
+              <div className="h-1 bg-gradient-to-r from-amber-500 to-rose-500 w-full" />
+              <div className="p-6 text-center">
+                <div className="mx-auto h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0 mb-4 animate-bounce">
+                  <AlertCircle size={24} />
+                </div>
+                
+                <h3 className="text-base font-extrabold text-white mb-2 tracking-tight">
+                  📌 Posición No Disponible
+                </h3>
+                
+                <div className="text-[11px] text-amber-200/90 font-medium bg-amber-500/5 border border-amber-500/10 rounded-lg p-2.5 mb-4 leading-normal text-left">
+                  La posición <strong className="text-white font-bold bg-amber-500/20 px-1.5 py-0.5 rounded">#{pinConflictState.position}</strong> ya está ocupada por otra plantilla:
+                  <span className="block mt-1 font-bold text-white truncate">"{pinConflictState.occupyingTemplateName}"</span>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed mb-6 font-medium">
+                  Para poder anclar la plantilla <strong className="text-teal-400">"{pinConflictState.currentTemplateName}"</strong> en esta posición, primero debes desanclar la plantilla que la ocupa.
+                </p>
+
+                <button
+                  id="pin-conflict-close-btn"
+                  onClick={() => setPinConflictState((prev) => ({ ...prev, isOpen: false }))}
+                  className="w-full bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 hover:shadow-[0_4px_15px_rgba(245,158,11,0.35)] active:scale-95 text-slate-950 font-black text-xs py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>Entendido, lo revisaré</span>
+                </button>
               </div>
             </motion.div>
           </div>
