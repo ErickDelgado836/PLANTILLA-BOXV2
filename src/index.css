@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom scrollbar class that only shows scrollbar on hover */
+.hover-scrollbar-x {
+  /* For Firefox */
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* For Internet Explorer 10-11 */
+}
+
+/* For Chrome, Safari and Opera */
+.hover-scrollbar-x::-webkit-scrollbar {
+  height: 0px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.hover-scrollbar-x:hover {
+  /* For Firefox on hover */
+  scrollbar-width: thin;
+}
+
+.hover-scrollbar-x:hover::-webkit-scrollbar {
+  height: 6px; /* Subtle thin scrollbar height */
+}
+
+.hover-scrollbar-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hover-scrollbar-x::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.hover-scrollbar-x:hover::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3); /* Slate-400 with default visibility */
+}
+
+.hover-scrollbar-x:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 212, 191, 0.6); /* Highlights in teal-400 on direct scrollbar hover */
+}
