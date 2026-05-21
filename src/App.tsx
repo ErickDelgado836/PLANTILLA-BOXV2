@@ -861,7 +861,7 @@ export default function App() {
               </div>
 
               {/* Responsive Options Buttons Scroll-tray */}
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar max-w-full pb-1 -mb-1 scroll-smooth shrink-0">
+             <div className="flex items-center gap-1.5 overflow-x-auto hover-scrollbar-x max-w-full pb-1 -mb-1 scroll-smooth shrink-0">
                 
                 {/* Minijuegos Run Button */}
                 <button
