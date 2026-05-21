@@ -5,14 +5,14 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Custom scrollbar class that only shows scrollbar on hover */
+/* Rediseño de barra de scroll para que solo aparezca al pasar el cursor encima */
 .hover-scrollbar-x {
-  /* For Firefox */
+  /* Para Firefox */
   scrollbar-width: none;
-  -ms-overflow-style: none; /* For Internet Explorer 10-11 */
+  -ms-overflow-style: none; /* Para Internet Explorer 10-11 */
 }
 
-/* For Chrome, Safari and Opera */
+/* Para Chrome, Safari y Opera */
 .hover-scrollbar-x::-webkit-scrollbar {
   height: 0px;
   background: transparent;
@@ -20,12 +20,12 @@
 }
 
 .hover-scrollbar-x:hover {
-  /* For Firefox on hover */
+  /* Para Firefox al pasar el cursor */
   scrollbar-width: thin;
 }
 
 .hover-scrollbar-x:hover::-webkit-scrollbar {
-  height: 6px; /* Subtle thin scrollbar height */
+  height: 6px; /* Altura fina de la barra de scroll */
 }
 
 .hover-scrollbar-x::-webkit-scrollbar-track {
@@ -38,9 +38,9 @@
 }
 
 .hover-scrollbar-x:hover::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3); /* Slate-400 with default visibility */
+  background: rgba(148, 163, 184, 0.3); /* Slate-400 sutil */
 }
 
 .hover-scrollbar-x:hover::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 212, 191, 0.6); /* Highlights in teal-400 on direct scrollbar hover */
+  background: rgba(45, 212, 191, 0.6); /* Color Turquesa cuando pasas el mouse directamente sobre la barra */
 }
