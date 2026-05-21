@@ -1,0 +1,6 @@
+{
+  "name": "PlantillaBox",
+  "description": "Espacio Creativo y Gestor de Respuestas Rápidas, con corrector ortográfico avanzado en español, minijuegos y calculadora integrada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
