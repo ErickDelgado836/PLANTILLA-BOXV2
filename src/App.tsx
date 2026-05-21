@@ -1114,9 +1114,6 @@ export default function App() {
           <AnimatePresence mode="popLayout">
             {getFilteredTemplates().map((tpl) => {
               const isSelected = selectedIds.has(tpl.id);
-              const isSpellchecking = spellCheckingIds.has(tpl.id);
-              const errorsList = spellCheckResults[tpl.id] || [];
-              const feedbackMsg = spellCheckMessage[tpl.id] || "";
 
               return (
                 <motion.article
@@ -1205,83 +1202,31 @@ export default function App() {
                     {/* Main editing textarea with auto-resizable styling helper */}
                     <div className="relative">
                       <textarea
+                        ref={(el) => {
+                          if (el) {
+                            el.style.height = "auto";
+                            el.style.height = `${el.scrollHeight}px`;
+                          }
+                        }}
                         placeholder="Escribe el borrador o contenido de tu plantilla rápida aquí..."
                         value={tpl.content}
                         readOnly={tpl.locked}
+                        spellCheck={false}
                         onChange={(e) => {
                           const updated = templates.map((t) =>
                             t.id === tpl.id ? { ...t, content: e.target.value, modified: Date.now() } : t
                           );
-                          // Clean previous spelling errors on update to stay consistent
-                          if (spellCheckResults[tpl.id]) {
-                            setSpellCheckResults((prev) => {
-                              const next = { ...prev };
-                              delete next[tpl.id];
-                              return next;
-                            });
-                          }
                           saveAndSetTemplates(updated);
+
+                          // Handle auto-expansion in UI immediately
+                          e.target.style.height = "auto";
+                          e.target.style.height = `${e.target.scrollHeight}px`;
                         }}
-                        className="w-full bg-[#0a0a0d]/60 border border-white/[0.04] focus:border-white/[0.08] rounded-xl p-3.5 text-xs text-slate-300 font-mono leading-relaxed placeholder:text-slate-600 min-h-[110px] max-h-[250px] resize-y focus:outline-none focus:ring-1 focus:ring-teal-400/20 focus:bg-[#0a0a0d]/80 transition-all font-medium"
+                        className="w-full bg-[#0a0a0d]/60 border border-white/[0.04] focus:border-white/[0.08] rounded-xl p-3.5 text-xs text-slate-300 font-mono leading-relaxed placeholder:text-slate-600 min-h-[110px] resize-none overflow-hidden focus:outline-none focus:ring-1 focus:ring-teal-400/20 focus:bg-[#0a0a0d]/80 transition-all font-medium"
                       />
                     </div>
 
                   </div>
-
-                  {/* CARD SPELL CHECK RECOMMENDATION BAR Tray */}
-                  {(errorsList.length > 0 || feedbackMsg || isSpellchecking) && (
-                    <div className="mx-5 mb-2 px-3 py-2 bg-slate-950/80 border border-teal-500/20 rounded-xl max-h-32 overflow-y-auto scrollbar animate-fadeIn">
-                      
-                      {/* Spinning loader status */}
-                      {isSpellchecking && (
-                        <div className="flex items-center gap-1.5 text-[10px] text-teal-400 font-mono py-1">
-                          <RefreshCw size={11} className="animate-spin" />
-                          <span>Analizando ortografía...</span>
-                        </div>
-                      )}
-
-                      {/* Check complete empty status feedback */}
-                      {!isSpellchecking && feedbackMsg && (
-                        <div className="text-[10px] text-slate-400 font-medium py-1 flex items-center gap-1.5">
-                          <Check size={11} className="text-teal-400 shrink-0" />
-                          <span>{feedbackMsg}</span>
-                        </div>
-                      )}
-
-                      {/* Actionable spelling suggestions List */}
-                      {!isSpellchecking && errorsList.length > 0 && (
-                        <div className="space-y-1.5">
-                          <div className="text-[9px] uppercase tracking-wider text-teal-400 font-semibold mb-1 flex items-center gap-1">
-                            <AlertCircle size={9} className="text-amber-400" />
-                            <span>Recomendaciones Ortográficas:</span>
-                          </div>
-                          {errorsList.map((err, idx) => (
-                            <div
-                              key={idx}
-                              className="text-[10px] py-1 px-1.5 bg-slate-900 border border-rose-500/10 rounded flex flex-wrap items-center justify-between gap-1.5"
-                            >
-                              <span className="shrink-1 truncate">
-                                <span className="text-rose-400 line-through font-semibold font-mono mr-1">{err.word}</span>
-                                <span className="text-slate-500 text-[9px] italic">({err.reason})</span>
-                              </span>
-                              <div className="flex items-center gap-1 shrink-0">
-                                {err.replacements.slice(0, 3).map((rep, repIdx) => (
-                                  <button
-                                    key={repIdx}
-                                    onClick={() => handleApplySpellcheckedFix(tpl.id, err.word, rep)}
-                                    className="bg-teal-500 text-slate-950 px-1.5 py-0.2 rounded font-mono text-[9px] font-bold hover:scale-105 active:scale-95 transition-all cursor-pointer hover:bg-teal-400"
-                                  >
-                                    {rep}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                    </div>
-                  )}
 
                   {/* BOTTOM METADATA & ACTIONS PANEL */}
                   <div className="px-5 pb-4 pt-1 border-t border-white/[0.03] bg-white/[0.005]">
@@ -1290,18 +1235,7 @@ export default function App() {
                       <span>Mod: {formatTimestamp(tpl.modified)}</span>
                     </div>
 
-                    <div className="flex items-center justify-between flex-wrap gap-1">
-                      
-                      {/* Spellcheck Trigger Toggle button */}
-                      <button
-                        onClick={() => handleSpellCheck(tpl.id, tpl.content)}
-                        disabled={isSpellchecking || tpl.locked}
-                        className="btn small !py-1 !px-2.5 !rounded-lg text-[10px] bg-teal-500/5 hover:bg-teal-500/10 hover:text-white border border-teal-500/10 focus:ring-1 focus:ring-teal-400/30 text-teal-300 disabled:opacity-40 transition-all font-semibold flex items-center gap-1 cursor-pointer"
-                        title="Auditar ortografía en español usando inteligencia artificial"
-                      >
-                        <Sparkles size={10} className="text-teal-400" />
-                        <span>Ortografía</span>
-                      </button>
+                    <div className="flex items-center justify-end flex-wrap gap-1">
 
                       {/* Toolbar Action Drawer */}
                       <div className="flex gap-1">
