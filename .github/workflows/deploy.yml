@@ -2,18 +2,18 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main", "master"] # Ejecuta cuando subes cambios a main o master
+    branches: ["main", "master"] # Se ejecuta al hacer push a main o master
 
-# Otorga los permisos necesarios al token de GitHub para publicar en Pages
+# Configura los permisos del GITHUB_TOKEN para permitir el despliegue a GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Permite solo una ejecución de despliegue simultánea para evitar conflictos
+# Permite un solo despliegue concurrente para evitar conflictos
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true # Cambiado a true para cancelar ejecuciones antiguas automáticamente
 
 jobs:
   deploy:
