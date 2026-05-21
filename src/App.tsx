@@ -338,11 +338,34 @@ export default function App() {
   // Action: Toggle Pin state
   const handleTogglePin = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const updated = templates.map((t) => (t.id === id ? { ...t, pinned: !t.pinned } : t));
+    const updated = templates.map((t) => {
+      if (t.id === id) {
+        const nextPinned = !t.pinned;
+        return {
+          ...t,
+          pinned: nextPinned,
+          pinPosition: nextPinned ? (t.pinPosition || 1) : undefined
+        };
+      }
+      return t;
+    });
     saveAndSetTemplates(updated);
     const item = updated.find((t) => t.id === id);
     if (item) {
-      showToast(item.pinned ? "Plantilla fijada arriba 📌" : "Desanclada de arriba 📍");
+      showToast(item.pinned ? `Plantilla fijada en posición #${item.pinPosition || 1} 📌` : "Desanclada de arriba 📍");
+    }
+  };
+
+  // Action: Set specific Pin Position
+  const handleSetPinPosition = (id: string, position: number, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = templates.map((t) =>
+      t.id === id ? { ...t, pinned: true, pinPosition: position } : t
+    );
+    saveAndSetTemplates(updated);
+    const item = updated.find((t) => t.id === id);
+    if (item) {
+      showToast(`Plantilla fijada en posición #${position} 📌`);
     }
   };
 
@@ -443,10 +466,17 @@ export default function App() {
       );
     });
 
-    // Sort to keep Pinned ones at the top, then modified dates
+    // Sort to keep Pinned ones at the top, then by pinPosition (1, 2, 3...), then modified dates
     return [...filtered].sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
+      if (a.pinned && b.pinned) {
+        const aPos = a.pinPosition || 1;
+        const bPos = b.pinPosition || 1;
+        if (aPos !== bPos) {
+          return aPos - bPos;
+        }
+      }
       return b.modified - a.modified;
     });
   };
@@ -861,7 +891,7 @@ export default function App() {
               </div>
 
               {/* Responsive Options Buttons Scroll-tray */}
-             <div className="flex items-center gap-1.5 overflow-x-auto hover-scrollbar-x max-w-full pb-1 -mb-1 scroll-smooth shrink-0">
+              <div className="flex items-center gap-1.5 overflow-x-auto hover-scrollbar-x max-w-full pb-1 -mb-1 scroll-smooth shrink-0">
                 
                 {/* Minijuegos Run Button */}
                 <button
@@ -1118,10 +1148,11 @@ export default function App() {
                     {tpl.pinned && (
                       <span 
                         onClick={(e) => handleTogglePin(tpl.id, e)}
-                        className="p-1 hover:bg-white/5 rounded-md cursor-pointer text-teal-400" 
-                        title="Anclada al principio"
+                        className="py-1 px-1.5 hover:bg-teal-500/20 rounded-md cursor-pointer text-teal-400 flex items-center gap-1 text-[10px] font-bold bg-teal-500/10 border border-teal-500/20" 
+                        title={`Anclada en posición ${tpl.pinPosition || 1} - Haz clic para desanclar`}
                       >
                         <Pin size={11} className="fill-teal-400" />
+                        <span className="leading-none text-[9px]">{tpl.pinPosition || 1}</span>
                       </span>
                     )}
                     {tpl.locked && (
@@ -1305,14 +1336,46 @@ export default function App() {
                               <span>{tpl.locked ? "Desbloquear" : "Bloquear"}</span>
                             </button>
 
-                            {/* PIN TOGGLE */}
-                            <button
-                              onClick={(e) => handleTogglePin(tpl.id, e)}
-                              className="w-full text-left px-2.5 py-1.5 text-[10px] hover:text-white hover:bg-white/5 rounded-lg flex items-center gap-2 cursor-pointer font-medium"
-                            >
-                              <Pin size={11} />
-                              <span>{tpl.pinned ? "Desanclar" : "Fijar Arriba"}</span>
-                            </button>
+                            {/* PIN TOGGLE & Position selector */}
+                            <div className="px-2.5 py-2 text-[10px] rounded-lg hover:bg-white/5 flex flex-col gap-1.5 transition-all">
+                              <button
+                                onClick={(e) => handleTogglePin(tpl.id, e)}
+                                className="w-full text-left font-medium text-slate-400 hover:text-white flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <Pin size={11} className={tpl.pinned ? "text-teal-400 fill-teal-400" : ""} />
+                                  <span>{tpl.pinned ? "Desanclar" : "Fijar Arriba"}</span>
+                                </span>
+                                {tpl.pinned && (
+                                  <span className="bg-teal-500/20 text-teal-300 text-[8px] font-black px-1.5 py-0.5 rounded-full leading-none shrink-0 border border-teal-500/30">
+                                    #{tpl.pinPosition || 1}
+                                  </span>
+                                )}
+                              </button>
+
+                              <div className="flex items-center gap-1.5 mt-0.5" onClick={(e) => e.stopPropagation()}>
+                                <span className="text-[9px] text-slate-500 shrink-0 select-none">Anclar en:</span>
+                                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0">
+                                  {[1, 2, 3, 4, 5, 6].map((pos) => {
+                                    const isActive = tpl.pinned && (tpl.pinPosition === pos || (!tpl.pinPosition && pos === 1));
+                                    return (
+                                      <button
+                                        key={pos}
+                                        onClick={(e) => handleSetPinPosition(tpl.id, pos, e)}
+                                        className={`w-[18px] h-[18px] rounded transition-all cursor-pointer flex items-center justify-center text-[9px] font-bold border ${
+                                          isActive
+                                            ? "bg-teal-500 border-teal-400 text-slate-950 font-black shadow-[0_0_8px_rgba(45,212,191,0.5)]"
+                                            : "bg-slate-900/60 border-white/5 text-slate-400 hover:bg-white/10 hover:border-white/10 hover:text-white"
+                                        }`}
+                                        title={`Anclar en la posición #${pos}`}
+                                      >
+                                        {pos}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
 
                             {/* DUPLICATE */}
                             <button
