@@ -5,6 +5,7 @@ export interface Template {
   modified: number;
   pinned: boolean;
   locked: boolean;
+  pinPosition?: number;
 }
 
 export interface ShelfItem {
