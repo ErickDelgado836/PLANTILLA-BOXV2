@@ -529,6 +529,75 @@ export default function App() {
     });
   };
 
+  // Helper to color-code each pin position uniquely with premium custom styling
+  const getPinPositionColors = (pos: number) => {
+    switch (pos) {
+      case 1:
+        return {
+          textColor: "text-emerald-400",
+          iconColor: "text-emerald-400 fill-emerald-400",
+          badge: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20",
+          btnActive: "bg-emerald-500 border-emerald-400 text-slate-950 font-black shadow-[0_0_10px_rgba(16,185,129,0.5)]",
+          btnInactive: "bg-slate-900/60 border-emerald-500/10 text-emerald-500/60 hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-400",
+          btnOccupied: "bg-emerald-500/10 border-emerald-500/40 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.25)] hover:bg-emerald-500/20 font-bold"
+        };
+      case 2:
+        return {
+          textColor: "text-cyan-400",
+          iconColor: "text-cyan-400 fill-cyan-400",
+          badge: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20 hover:bg-cyan-500/20",
+          btnActive: "bg-cyan-500 border-cyan-400 text-slate-950 font-black shadow-[0_0_10px_rgba(6,182,212,0.5)]",
+          btnInactive: "bg-slate-900/60 border-cyan-500/10 text-cyan-500/60 hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:text-cyan-400",
+          btnOccupied: "bg-cyan-500/10 border-cyan-500/40 text-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.25)] hover:bg-cyan-500/20 font-bold"
+        };
+      case 3:
+        return {
+          textColor: "text-violet-400",
+          iconColor: "text-violet-400 fill-violet-400",
+          badge: "text-violet-400 bg-violet-500/10 border-violet-500/20 hover:bg-violet-500/20",
+          btnActive: "bg-violet-500 border-violet-400 text-slate-950 font-black shadow-[0_0_10px_rgba(139,92,246,0.5)]",
+          btnInactive: "bg-slate-900/60 border-violet-500/10 text-violet-500/60 hover:bg-violet-500/10 hover:border-violet-500/30 hover:text-violet-400",
+          btnOccupied: "bg-violet-500/10 border-violet-500/40 text-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.25)] hover:bg-violet-500/20 font-bold"
+        };
+      case 4:
+        return {
+          textColor: "text-amber-400",
+          iconColor: "text-amber-400 fill-amber-400",
+          badge: "text-amber-400 bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20",
+          btnActive: "bg-amber-500 border-amber-400 text-slate-950 font-black shadow-[0_0_10px_rgba(245,158,11,0.5)]",
+          btnInactive: "bg-slate-900/60 border-amber-500/10 text-amber-500/60 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-400",
+          btnOccupied: "bg-amber-500/10 border-amber-500/40 text-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.25)] hover:bg-amber-500/20 font-bold"
+        };
+      case 5:
+        return {
+          textColor: "text-rose-400",
+          iconColor: "text-rose-400 fill-rose-400",
+          badge: "text-rose-400 bg-rose-500/10 border-rose-500/20 hover:bg-rose-500/20",
+          btnActive: "bg-rose-500 border-rose-400 text-slate-950 font-black shadow-[0_0_10px_rgba(244,63,94,0.5)]",
+          btnInactive: "bg-slate-900/60 border-rose-500/10 text-rose-500/60 hover:bg-rose-500/10 hover:border-rose-500/30 hover:text-rose-400",
+          btnOccupied: "bg-rose-500/10 border-rose-500/40 text-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.25)] hover:bg-rose-500/20 font-bold"
+        };
+      case 6:
+        return {
+          textColor: "text-orange-400",
+          iconColor: "text-orange-400 fill-orange-400",
+          badge: "text-orange-400 bg-orange-500/10 border-orange-500/20 hover:bg-orange-500/20",
+          btnActive: "bg-orange-500 border-orange-400 text-slate-950 font-black shadow-[0_0_10px_rgba(249,115,22,0.5)]",
+          btnInactive: "bg-slate-900/60 border-orange-500/10 text-orange-500/60 hover:bg-orange-500/10 hover:border-orange-500/30 hover:text-orange-400",
+          btnOccupied: "bg-orange-500/10 border-orange-500/40 text-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.25)] hover:bg-orange-500/20 font-bold"
+        };
+      default:
+        return {
+          textColor: "text-teal-400",
+          iconColor: "text-teal-400 fill-teal-400",
+          badge: "text-teal-400 bg-teal-500/10 border-teal-500/20 hover:bg-teal-500/20",
+          btnActive: "bg-teal-500 border-teal-400 text-slate-950 font-black shadow-[0_0_10px_rgba(20,184,166,0.5)]",
+          btnInactive: "bg-slate-900/60 border-white/5 text-slate-400 hover:bg-white/10 hover:border-white/10 hover:text-white",
+          btnOccupied: "bg-teal-500/10 border-teal-500/40 text-teal-400 shadow-[0_0_8px_rgba(20,184,166,0.25)] hover:bg-teal-500/20 font-bold"
+        };
+    }
+  };
+
   // Format UNIX timestamp elegantly helper
   const formatTimestamp = (ts: number): string => {
     try {
@@ -1193,10 +1262,10 @@ export default function App() {
                     {tpl.pinned && (
                       <span 
                         onClick={(e) => handleTogglePin(tpl.id, e)}
-                        className="py-1 px-1.5 hover:bg-teal-500/20 rounded-md cursor-pointer text-teal-400 flex items-center gap-1 text-[10px] font-bold bg-teal-500/10 border border-teal-500/20" 
+                        className={`py-1 px-1.5 rounded-md cursor-pointer flex items-center gap-1 text-[10px] font-bold border transition-all ${getPinPositionColors(tpl.pinPosition || 1).badge}`} 
                         title={`Anclada en posición ${tpl.pinPosition || 1} - Haz clic para desanclar`}
                       >
-                        <Pin size={11} className="fill-teal-400" />
+                        <Pin size={11} className={getPinPositionColors(tpl.pinPosition || 1).iconColor} />
                         <span className="leading-none text-[9px]">{tpl.pinPosition || 1}</span>
                       </span>
                     )}
@@ -1355,11 +1424,11 @@ export default function App() {
                                 className="w-full text-left font-medium text-slate-400 hover:text-white flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
                               >
                                 <span className="flex items-center gap-2">
-                                  <Pin size={11} className={tpl.pinned ? "text-teal-400 fill-teal-400" : ""} />
+                                  <Pin size={11} className={tpl.pinned ? getPinPositionColors(tpl.pinPosition || 1).iconColor : ""} />
                                   <span>{tpl.pinned ? "Desanclar" : "Fijar Arriba"}</span>
                                 </span>
                                 {tpl.pinned && (
-                                  <span className="bg-teal-500/20 text-teal-300 text-[8px] font-black px-1.5 py-0.5 rounded-full leading-none shrink-0 border border-teal-500/30">
+                                  <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full leading-none shrink-0 border transition-all ${getPinPositionColors(tpl.pinPosition || 1).badge}`}>
                                     #{tpl.pinPosition || 1}
                                   </span>
                                 )}
@@ -1370,18 +1439,34 @@ export default function App() {
                                 <div className="flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0">
                                   {[1, 2, 3, 4, 5, 6].map((pos) => {
                                     const isActive = tpl.pinned && (tpl.pinPosition === pos || (!tpl.pinPosition && pos === 1));
+                                    const colorSet = getPinPositionColors(pos);
+                                    const occupyingTemplate = templates.find(
+                                      (t) => t.pinned && (t.pinPosition === pos || (!t.pinPosition && pos === 1))
+                                    );
+                                    const isOccupiedByAnother = occupyingTemplate && occupyingTemplate.id !== tpl.id;
                                     return (
                                       <button
                                         key={pos}
                                         onClick={(e) => handleSetPinPosition(tpl.id, pos, e)}
-                                        className={`w-[18px] h-[18px] rounded transition-all cursor-pointer flex items-center justify-center text-[9px] font-bold border ${
+                                        className={`w-[18px] h-[18px] rounded transition-all cursor-pointer flex items-center justify-center text-[9px] font-black border relative ${
                                           isActive
-                                            ? "bg-teal-500 border-teal-400 text-slate-950 font-black shadow-[0_0_8px_rgba(45,212,191,0.5)]"
-                                            : "bg-slate-900/60 border-white/5 text-slate-400 hover:bg-white/10 hover:border-white/10 hover:text-white"
+                                            ? colorSet.btnActive
+                                            : isOccupiedByAnother
+                                            ? colorSet.btnOccupied
+                                            : colorSet.btnInactive
                                         }`}
-                                        title={`Anclar en la posición #${pos}`}
+                                        title={
+                                          isActive
+                                            ? `Fijada aquí por esta plantilla (Posición #${pos})`
+                                            : isOccupiedByAnother
+                                            ? `Ocupada por "${occupyingTemplate.title || "Plantilla sin título"}" (Posición #${pos})`
+                                            : `Anclar en la posición #${pos} (Disponible)`
+                                        }
                                       >
-                                        {pos}
+                                        <span>{pos}</span>
+                                        {isOccupiedByAnother && (
+                                          <span className={`absolute -top-[1.5px] -right-[1.5px] w-1.5 h-1.5 rounded-full animate-pulse ${colorSet.textColor} bg-current shadow-[0_0_6px_currentColor]`} />
+                                        )}
                                       </button>
                                     );
                                   })}
