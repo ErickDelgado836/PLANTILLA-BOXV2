@@ -1238,7 +1238,14 @@ export default function App() {
                         readOnly={tpl.locked}
                         onChange={(e) => {
                           const updated = templates.map((t) =>
-                            t.id === tpl.id ? { ...t, title: e.target.value, modified: Date.now() } : t
+                            t.id === tpl.id ? { ...t, title: e.target.value } : t
+                          );
+                          saveAndSetTemplates(updated);
+                        }}
+                        onBlur={() => {
+                          if (tpl.locked) return;
+                          const updated = templates.map((t) =>
+                            t.id === tpl.id ? { ...t, modified: Date.now() } : t
                           );
                           saveAndSetTemplates(updated);
                         }}
@@ -1262,13 +1269,20 @@ export default function App() {
                         spellCheck={false}
                         onChange={(e) => {
                           const updated = templates.map((t) =>
-                            t.id === tpl.id ? { ...t, content: e.target.value, modified: Date.now() } : t
+                            t.id === tpl.id ? { ...t, content: e.target.value } : t
                           );
                           saveAndSetTemplates(updated);
 
                           // Handle auto-expansion in UI immediately
                           e.target.style.height = "auto";
                           e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
+                        onBlur={() => {
+                          if (tpl.locked) return;
+                          const updated = templates.map((t) =>
+                            t.id === tpl.id ? { ...t, modified: Date.now() } : t
+                          );
+                          saveAndSetTemplates(updated);
                         }}
                         className="w-full bg-[#0a0a0d]/60 border border-white/[0.04] focus:border-white/[0.08] rounded-xl p-3.5 text-xs text-slate-300 font-mono leading-relaxed placeholder:text-slate-600 min-h-[110px] resize-none overflow-hidden focus:outline-none focus:ring-1 focus:ring-teal-400/20 focus:bg-[#0a0a0d]/80 transition-all font-medium"
                       />
