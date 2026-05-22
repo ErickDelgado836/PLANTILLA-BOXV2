@@ -1259,8 +1259,20 @@ export default function App() {
                       <textarea
                         ref={(el) => {
                           if (el) {
-                            el.style.height = "auto";
-                            el.style.height = `${el.scrollHeight}px`;
+                            const isFocused = document.activeElement === el;
+                            if (isFocused) {
+                              const prevScrollTop = window.scrollY || document.documentElement.scrollTop;
+                              el.style.height = "auto";
+                              el.style.height = `${el.scrollHeight}px`;
+                              if (document.documentElement.scrollTop !== prevScrollTop) {
+                                document.documentElement.scrollTop = prevScrollTop;
+                              }
+                            } else {
+                              const targetHeight = `${el.scrollHeight}px`;
+                              if (el.style.height !== targetHeight) {
+                                el.style.height = targetHeight;
+                              }
+                            }
                           }
                         }}
                         placeholder="Escribe el borrador o contenido de tu plantilla rápida aquí..."
@@ -1273,9 +1285,13 @@ export default function App() {
                           );
                           saveAndSetTemplates(updated);
 
-                          // Handle auto-expansion in UI immediately
+                          // Handle auto-expansion in UI immediately for focused textarea
+                          const prevScrollTop = window.scrollY || document.documentElement.scrollTop;
                           e.target.style.height = "auto";
                           e.target.style.height = `${e.target.scrollHeight}px`;
+                          if (document.documentElement.scrollTop !== prevScrollTop) {
+                            document.documentElement.scrollTop = prevScrollTop;
+                          }
                         }}
                         onBlur={() => {
                           if (tpl.locked) return;
