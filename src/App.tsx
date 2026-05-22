@@ -120,6 +120,9 @@ export default function App() {
   const [spellCheckingIds, setSpellCheckingIds] = useState<Set<string>>(new Set());
   const [spellCheckMessage, setSpellCheckMessage] = useState<Record<string, string>>({});
 
+  // Hovered state for elite spring title tooltip
+  const [hoveredTitleId, setHoveredTitleId] = useState<string | null>(null);
+
   // Refs for custom animations or state tracking
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -1299,27 +1302,70 @@ export default function App() {
                         {isSelected && <Check size={11} className="stroke-[3]" />}
                       </button>
 
-                      {/* Title input field */}
-                      <input
-                        type="text"
-                        placeholder="Sin título (clic para añadir)"
-                        value={tpl.title}
-                        readOnly={tpl.locked}
-                        onChange={(e) => {
-                          const updated = templates.map((t) =>
-                            t.id === tpl.id ? { ...t, title: e.target.value } : t
-                          );
-                          saveAndSetTemplates(updated);
-                        }}
-                        onBlur={() => {
-                          if (tpl.locked) return;
-                          const updated = templates.map((t) =>
-                            t.id === tpl.id ? { ...t, modified: Date.now() } : t
-                          );
-                          saveAndSetTemplates(updated);
-                        }}
-                        className="bg-transparent border-none text-slate-100 font-bold text-sm tracking-tight placeholder:text-slate-600 focus:outline-none flex-1 truncate py-0.5"
-                      />
+                      {/* Title input field wrapped for custom hover tooltip */}
+                      <div 
+                        onMouseEnter={() => setHoveredTitleId(tpl.id)}
+                        onMouseLeave={() => setHoveredTitleId(null)}
+                        className="relative group/title flex-1 flex items-center min-w-0"
+                      >
+                        <input
+                          type="text"
+                          placeholder="Sin título (clic para añadir)"
+                          value={tpl.title}
+                          readOnly={tpl.locked}
+                          onChange={(e) => {
+                            const updated = templates.map((t) =>
+                              t.id === tpl.id ? { ...t, title: e.target.value } : t
+                            );
+                            saveAndSetTemplates(updated);
+                          }}
+                          onBlur={() => {
+                            if (tpl.locked) return;
+                            const updated = templates.map((t) =>
+                              t.id === tpl.id ? { ...t, modified: Date.now() } : t
+                            );
+                            saveAndSetTemplates(updated);
+                          }}
+                          className="bg-transparent border-none text-slate-100 font-bold text-sm tracking-tight placeholder:text-slate-600 focus:outline-none flex-1 truncate py-0.5 w-full"
+                        />
+                        
+                        {/* Elite custom floating tooltip for complete title visibility */}
+                        <AnimatePresence>
+                          {hoveredTitleId === tpl.id && tpl.title && tpl.title.trim().length > 0 && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.75, y: 10 }}
+                              animate={{ 
+                                opacity: 1, 
+                                scale: 1, 
+                                y: 0,
+                                transition: {
+                                  type: "spring",
+                                  stiffness: 420,
+                                  damping: 14,
+                                  mass: 0.65
+                                }
+                              }}
+                              exit={{ 
+                                opacity: 0, 
+                                scale: 0.8, 
+                                y: 8,
+                                transition: {
+                                  type: "spring",
+                                  stiffness: 450,
+                                  damping: 22
+                                }
+                              }}
+                              className="absolute bottom-full left-0 mb-2.5 pointer-events-none z-50 bg-[#0a0a0d]/95 border border-white/10 rounded-xl py-2 px-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.85)] max-w-xs backdrop-blur-md"
+                            >
+                              <p className="text-[10px] text-teal-400 font-mono font-extrabold tracking-wider uppercase mb-1">Título Completo</p>
+                              <p className="text-xs text-slate-100 font-semibold leading-normal break-all">
+                                {tpl.title}
+                              </p>
+                              <div className="absolute top-full left-4 w-2 h-2 -translate-y-1 rotate-45 bg-[#0a0a0d] border-r border-b border-white/10" />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
 
                     </div>
 
