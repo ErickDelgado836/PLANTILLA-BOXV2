@@ -17,6 +17,7 @@ export default function GameRunner({ onClose, zIndex, onFocus }: GameRunnerProps
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [deadType, setDeadType] = useState<string>("😵");
+  const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
 
   // Draggable and Resizable state
   const [position, setPosition] = useState({ x: 120, y: 150 });
@@ -70,14 +71,23 @@ export default function GameRunner({ onClose, zIndex, onFocus }: GameRunnerProps
     stateRef.current.highScore = highScore;
   }, [highScore]);
 
-  // Center window on mount
+  // Center window on mount & detect touch capability
   useEffect(() => {
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsTouchDevice(isTouch);
+
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const defaultWidth = Math.min(w - 20, 440);
+    const defaultHeight = isTouch ? 385 : 320;
+
+    setSize({ width: defaultWidth, height: defaultHeight });
     setPosition({
-      x: Math.max(10, (w - 440) / 2),
-      y: Math.max(80, (h - 320) / 2),
+      x: Math.max(10, (w - defaultWidth) / 2),
+      y: Math.max(80, (h - defaultHeight) / 2),
     });
+    
+    startSize.current = { width: defaultWidth, height: defaultHeight };
   }, []);
 
   // Keyboard Event registration
@@ -299,6 +309,30 @@ export default function GameRunner({ onClose, zIndex, onFocus }: GameRunnerProps
     }
   };
 
+  const handleDuckStart = (e?: React.PointerEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const s = stateRef.current;
+    if (!s.isPlaying || s.gameOver) {
+      triggerJump();
+      return;
+    }
+    s.camel.ducking = true;
+    if (!s.camel.grounded) {
+      s.camel.dy += 6; // quick fall
+    }
+  };
+
+  const handleDuckEnd = (e?: React.PointerEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    stateRef.current.camel.ducking = false;
+  };
+
   // Drag handlers
   const handleHeaderMouseDown = (e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest(".calc-close")) return;
@@ -440,10 +474,41 @@ export default function GameRunner({ onClose, zIndex, onFocus }: GameRunnerProps
           />
         </div>
 
-        <div className="text-[11px] text-slate-500 flex justify-between w-full border-t border-white/5 pt-2 flex-shrink-0">
-          <span>⌨️ Clic / Espacio: Saltar</span>
-          <span>⬇️ Abajo: Agacharse / Caída rápida</span>
-        </div>
+        {/* Mobile controls layout if on mobile/touch device */}
+        {isTouchDevice ? (
+          <div className="flex gap-3 w-full mt-1.5 justify-center items-center flex-shrink-0 animate-fadeIn select-none">
+            {/* Slide/Duck Button */}
+            <button
+              onPointerDown={handleDuckStart}
+              onPointerUp={handleDuckEnd}
+              onPointerLeave={handleDuckEnd}
+              className="flex-1 h-12 bg-indigo-500/10 active:bg-indigo-500/25 border border-indigo-500/20 active:border-indigo-500/45 rounded-xl flex flex-col items-center justify-center text-indigo-400 select-none touch-none cursor-pointer transition-all active:scale-[0.97] shadow-[0_2px_10px_rgba(0,0,0,0.3)]"
+              style={{ touchAction: "none" }}
+            >
+              <span className="text-[11px] font-black tracking-wider uppercase">AGACHASE</span>
+              <span className="text-[9px] opacity-60">Mantener ⬇️</span>
+            </button>
+
+            {/* Jump Button */}
+            <button
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerJump();
+              }}
+              className="flex-1 h-12 bg-teal-500/10 active:bg-teal-500/25 border border-teal-500/20 active:border-teal-500/45 rounded-xl flex flex-col items-center justify-center text-teal-400 select-none touch-none cursor-pointer transition-all active:scale-[0.97] shadow-[0_2px_10px_rgba(0,0,0,0.3)]"
+              style={{ touchAction: "none" }}
+            >
+              <span className="text-[11px] font-black tracking-wider uppercase">SALTAR</span>
+              <span className="text-[9px] opacity-60">Pulsar ⬆️</span>
+            </button>
+          </div>
+        ) : (
+          <div className="text-[11px] text-slate-500 flex justify-between w-full border-t border-white/5 pt-2 flex-shrink-0">
+            <span>⌨️ Clic / Espacio: Saltar</span>
+            <span>⬇️ Abajo: Agacharse / Caída rápida</span>
+          </div>
+        )}
       </div>
     </div>
   );
