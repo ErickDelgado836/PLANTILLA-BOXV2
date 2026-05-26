@@ -1617,17 +1617,20 @@ export default function App() {
                               transition: {
                                 width: { type: "spring", stiffness: 350, damping: 25 },
                                 opacity: { duration: 0.15 }
-                              }
+                              },
+                              transitionEnd: { overflow: "visible" }
                             }}
                             exit={{ 
                               width: 0, 
                               opacity: 0,
+                              overflow: "hidden",
                               transition: {
                                 width: { type: "spring", stiffness: 350, damping: 28 },
                                 opacity: { duration: 0.12 }
                               }
                             }}
-                            className="overflow-hidden flex items-center shrink-0"
+                            style={{ overflow: "hidden" }}
+                            className="flex items-center shrink-0"
                           >
                             <div className="pl-1 flex items-center shrink-0">
                               <motion.button
