@@ -279,6 +279,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [clearingCardId, setClearingCardId] = useState<string | null>(null);
 
   // Tool Windows (Calculator, Game Runner)
   const [showCalc, setShowCalc] = useState(false);
@@ -728,9 +729,13 @@ export default function App() {
       showToast("La plantilla está bloqueada 🔒", "warn");
       return;
     }
+    setClearingCardId(id);
+    setTimeout(() => {
+      setClearingCardId(null);
+    }, 800);
     const updated = templates.map((t) => (t.id === id ? { ...t, content: "", modified: Date.now() } : t));
     saveAndSetTemplates(updated);
-    showToast("Contenido despejado");
+    showToast("Contenido despejado ✨");
   };
 
   // Filter templates based on Search query
@@ -1676,14 +1681,16 @@ export default function App() {
                       <textarea
                         ref={(el) => {
                           if (el) {
-                            // Only set height initially or if values update from outside
                             const isFocused = document.activeElement === el;
                             if (!el.style.height) {
                               el.style.height = `${el.scrollHeight}px`;
-                            } else if (!isFocused) {
-                              const expectedHeight = `${el.scrollHeight}px`;
-                              if (el.style.height !== expectedHeight) {
-                                el.style.height = expectedHeight;
+                            } else if (!isFocused || el.value === "") {
+                              // Reset height first so we can accurately measure the minimized content scrollHeight
+                              const prevScrollTop = window.scrollY;
+                              el.style.height = "auto";
+                              el.style.height = `${el.scrollHeight}px`;
+                              if (isFocused && window.scrollY !== prevScrollTop) {
+                                window.scrollTo(window.scrollX, prevScrollTop);
                               }
                             }
                           }
@@ -1698,9 +1705,13 @@ export default function App() {
                           );
                           saveAndSetTemplates(updated);
 
-                          // Handle auto-expansion in UI immediately for focused textarea with clean height adaptation
+                          // Handle auto-expansion/shrinkage in UI immediately with pristine stability
+                          const prevScrollTop = window.scrollY;
                           e.target.style.height = "auto";
                           e.target.style.height = `${e.target.scrollHeight}px`;
+                          if (window.scrollY !== prevScrollTop) {
+                            window.scrollTo(window.scrollX, prevScrollTop);
+                          }
                         }}
                         onBlur={() => {
                           if (tpl.locked) return;
@@ -1709,7 +1720,9 @@ export default function App() {
                           );
                           saveAndSetTemplates(updated);
                         }}
-                        className="w-full bg-[#0a0a0d]/60 border border-white/[0.04] focus:border-white/[0.08] rounded-xl p-3.5 text-xs text-slate-300 font-mono leading-relaxed placeholder:text-slate-600 min-h-[110px] resize-none overflow-hidden focus:outline-none focus:ring-1 focus:ring-teal-400/20 focus:bg-[#0a0a0d]/80 transition-all font-medium"
+                        className={`w-full bg-[#0a0a0d]/60 border border-white/[0.04] focus:border-white/[0.08] rounded-xl p-3.5 text-xs text-slate-300 font-mono leading-relaxed placeholder:text-slate-600 min-h-[110px] resize-none overflow-hidden focus:outline-none focus:ring-1 focus:ring-teal-400/20 focus:bg-[#0a0a0d]/80 font-medium textarea-autoresize ${
+                          clearingCardId === tpl.id ? "animate-clear-flash" : ""
+                        }`}
                       />
                     </div>
 
