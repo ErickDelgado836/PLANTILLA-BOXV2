@@ -42,6 +42,233 @@ const GUEST_KEY = APP_PREFIX + "_guest_session";
 const SHELF_KEY = (u: string) => APP_PREFIX + "_shelf_" + u;
 const TEMPL_KEY = (u: string) => APP_PREFIX + "_tpls_" + u;
 
+const CARD_COLORS = [
+  {
+    id: "default",
+    label: "Estándar",
+    dotColor: "bg-slate-500/40",
+    borderClass: "border-white/[0.06]",
+    activeBorderClass: "border-white/20",
+    bgClass: "bg-slate-900/30",
+    activeBgClass: "bg-white/[0.01]",
+    focusRing: "focus-within:border-white/30 focus-within:ring-2 focus-within:ring-white/10",
+    shadowClass: "shadow-[0_4px_14px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.05)]",
+    activeShadowClass: "shadow-[0_10px_40px_rgba(255,255,255,0.12),0_0_30px_rgba(255,255,255,0.06)] border-white/20",
+  },
+  {
+    id: "emerald",
+    label: "Esmeralda",
+    dotColor: "bg-emerald-400",
+    borderClass: "border-emerald-500/20",
+    activeBorderClass: "border-emerald-400",
+    bgClass: "bg-gradient-to-b from-emerald-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-emerald-500/[0.06] to-slate-950/70",
+    focusRing: "focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/35",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_15px_rgba(16,185,129,0.03)] hover:shadow-[0_8px_32px_rgba(16,185,129,0.18),0_0_20px_rgba(16,185,129,0.12)] hover:border-emerald-500/40",
+    activeShadowClass: "shadow-[0_10px_45px_rgba(16,185,129,0.45),0_0_30px_rgba(16,185,129,0.25)] border-emerald-400",
+  },
+  {
+    id: "blue",
+    label: "Zafiro",
+    dotColor: "bg-blue-400",
+    borderClass: "border-blue-500/20",
+    activeBorderClass: "border-blue-400",
+    bgClass: "bg-gradient-to-b from-blue-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-blue-500/[0.06] to-slate-950/70",
+    focusRing: "focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/35",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_15px_rgba(59,130,246,0.03)] hover:shadow-[0_8px_32px_rgba(59,130,246,0.18),0_0_20px_rgba(59,130,246,0.12)] hover:border-blue-500/40",
+    activeShadowClass: "shadow-[0_10px_45px_rgba(59,130,246,0.45),0_0_30px_rgba(59,130,246,0.25)] border-blue-400",
+  },
+  {
+    id: "purple",
+    label: "Amatista",
+    dotColor: "bg-purple-400",
+    borderClass: "border-purple-500/20",
+    activeBorderClass: "border-purple-400",
+    bgClass: "bg-gradient-to-b from-purple-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-purple-500/[0.06] to-slate-950/70",
+    focusRing: "focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-500/35",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_15px_rgba(168,85,247,0.03)] hover:shadow-[0_8px_32px_rgba(168,85,247,0.18),0_0_20px_rgba(168,85,247,0.12)] hover:border-purple-500/40",
+    activeShadowClass: "shadow-[0_10px_45px_rgba(168,85,247,0.45),0_0_30px_rgba(168,85,247,0.25)] border-purple-400",
+  },
+  {
+    id: "amber",
+    label: "Oro",
+    dotColor: "bg-amber-400",
+    borderClass: "border-amber-500/20",
+    activeBorderClass: "border-amber-400",
+    bgClass: "bg-gradient-to-b from-amber-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-amber-500/[0.05] to-slate-950/60",
+    focusRing: "focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-500/30 focus-within:shadow-[0_0_22px_rgba(245,158,11,0.35),inset_0_0_15px_rgba(245,158,11,0.08)]",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(245,158,11,0.22)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_25px_rgba(245,158,11,0.38)]",
+  },
+  {
+    id: "rose",
+    label: "Rubí",
+    dotColor: "bg-rose-400",
+    borderClass: "border-rose-500/20",
+    activeBorderClass: "border-rose-400/40",
+    bgClass: "bg-gradient-to-b from-rose-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-rose-500/[0.05] to-slate-950/60",
+    focusRing: "focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-500/30 focus-within:shadow-[0_0_22px_rgba(244,63,94,0.35),inset_0_0_15px_rgba(244,63,94,0.08)]",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(244,63,94,0.22)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_25px_rgba(244,63,94,0.38)]",
+  },
+  {
+    id: "orange",
+    label: "Naranja",
+    dotColor: "bg-orange-400",
+    borderClass: "border-orange-500/20",
+    activeBorderClass: "border-orange-400/40",
+    bgClass: "bg-gradient-to-b from-orange-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-orange-500/[0.05] to-slate-950/60",
+    focusRing: "focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-500/30 focus-within:shadow-[0_0_22px_rgba(249,115,22,0.35),inset_0_0_15px_rgba(249,115,22,0.08)]",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(249,115,22,0.22)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_25px_rgba(249,115,22,0.38)]",
+  },
+  {
+    id: "turquoise",
+    label: "Turquesa",
+    dotColor: "bg-cyan-400",
+    borderClass: "border-cyan-500/20",
+    activeBorderClass: "border-cyan-400/40",
+    bgClass: "bg-gradient-to-b from-cyan-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-cyan-500/[0.05] to-slate-950/60",
+    focusRing: "focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/30 focus-within:shadow-[0_0_22px_rgba(6,182,212,0.35),inset_0_0_15px_rgba(6,182,212,0.08)]",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(6,182,212,0.22)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_25px_rgba(6,182,212,0.38)]",
+  },
+  {
+    id: "fuchsia",
+    label: "Fucsia",
+    dotColor: "bg-fuchsia-400",
+    borderClass: "border-fuchsia-500/20",
+    activeBorderClass: "border-fuchsia-400/40",
+    bgClass: "bg-gradient-to-b from-fuchsia-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-fuchsia-500/[0.05] to-slate-950/60",
+    focusRing: "focus-within:border-fuchsia-400 focus-within:ring-2 focus-within:ring-fuchsia-500/30 focus-within:shadow-[0_0_22px_rgba(217,70,239,0.35),inset_0_0_15px_rgba(217,70,239,0.08)]",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(217,70,239,0.22)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_25px_rgba(217,70,239,0.38)]",
+  },
+  {
+    id: "platinum",
+    label: "Platino",
+    dotColor: "bg-slate-200",
+    borderClass: "border-white/10",
+    activeBorderClass: "border-white/25",
+    bgClass: "bg-gradient-to-b from-white/[0.01] to-slate-950/50 backdrop-blur-xl",
+    activeBgClass: "bg-gradient-to-b from-white/[0.04] to-slate-950/60",
+    focusRing: "focus-within:border-white focus-within:ring-2 focus-within:ring-white/20 focus-within:shadow-[0_0_22px_rgba(255,255,255,0.25),inset_0_0_15px_rgba(255,255,255,0.08)]",
+    shadowClass: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(255,255,255,0.10)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_25px_rgba(255,255,255,0.25)]",
+  },
+];
+
+const getCardColorStyles = (colorId: string, isActive: boolean) => {
+  if (isActive) {
+    switch (colorId) {
+      case "emerald":
+        return {
+          borderAndBg: "border-emerald-400 bg-gradient-to-b from-emerald-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(16,185,129,0.45),0_0_30px_rgba(16,185,129,0.25)]",
+        };
+      case "blue":
+        return {
+          borderAndBg: "border-blue-400 bg-gradient-to-b from-blue-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(59,130,246,0.45),0_0_30px_rgba(59,130,246,0.25)]",
+        };
+      case "purple":
+        return {
+          borderAndBg: "border-purple-400 bg-gradient-to-b from-purple-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(168,85,247,0.45),0_0_30px_rgba(168,85,247,0.25)]",
+        };
+      case "amber":
+        return {
+          borderAndBg: "border-amber-400 bg-gradient-to-b from-amber-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(245,158,11,0.45),0_0_30px_rgba(245,158,11,0.25)]",
+        };
+      case "rose":
+        return {
+          borderAndBg: "border-rose-400 bg-gradient-to-b from-rose-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(244,63,94,0.45),0_0_30px_rgba(244,63,94,0.25)]",
+        };
+      case "orange":
+        return {
+          borderAndBg: "border-orange-400 bg-gradient-to-b from-orange-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(249,115,22,0.45),0_0_30px_rgba(249,115,22,0.25)]",
+        };
+      case "turquoise":
+        return {
+          borderAndBg: "border-cyan-400 bg-gradient-to-b from-cyan-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(6,182,212,0.45),0_0_30px_rgba(6,182,212,0.25)]",
+        };
+      case "fuchsia":
+        return {
+          borderAndBg: "border-fuchsia-400 bg-gradient-to-b from-fuchsia-500/[0.06] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(217,70,239,0.45),0_0_30px_rgba(217,70,239,0.25)]",
+        };
+      case "platinum":
+        return {
+          borderAndBg: "border-white/40 bg-gradient-to-b from-white/[0.05] to-slate-950/70",
+          shadow: "shadow-[0_10px_45px_rgba(255,255,255,0.3),0_0_30px_rgba(255,255,255,0.15)]",
+        };
+      default:
+        return {
+          borderAndBg: "border-white/20 bg-slate-900/30",
+          shadow: "shadow-[0_10px_40px_rgba(255,255,255,0.12),0_0_30px_rgba(255,255,255,0.06)]",
+        };
+    }
+  } else {
+    switch (colorId) {
+      case "emerald":
+        return {
+          borderAndBg: "border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_15px_rgba(16,185,129,0.03)] hover:shadow-[0_8px_32px_rgba(16,185,129,0.18),0_0_20px_rgba(16,185,129,0.12)] hover:border-emerald-500/40",
+        };
+      case "blue":
+        return {
+          borderAndBg: "border-blue-500/20 bg-gradient-to-b from-blue-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_15px_rgba(59,130,246,0.03)] hover:shadow-[0_8px_32px_rgba(59,130,246,0.18),0_0_20px_rgba(59,130,246,0.12)] hover:border-blue-500/40",
+        };
+      case "purple":
+        return {
+          borderAndBg: "border-purple-500/20 bg-gradient-to-b from-purple-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.5),0_0_15px_rgba(168,85,247,0.03)] hover:shadow-[0_8px_32px_rgba(168,85,247,0.18),0_0_20px_rgba(168,85,247,0.12)] hover:border-purple-500/40",
+        };
+      case "amber":
+        return {
+          borderAndBg: "border-amber-500/20 bg-gradient-to-b from-amber-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(245,158,11,0.03)] hover:shadow-[0_8px_32px_rgba(245,158,11,0.18),0_0_20px_rgba(245,158,11,0.12)] hover:border-amber-500/40",
+        };
+      case "rose":
+        return {
+          borderAndBg: "border-rose-500/20 bg-gradient-to-b from-rose-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(244,63,94,0.03)] hover:shadow-[0_8px_32px_rgba(244,63,94,0.18),0_0_20px_rgba(244,63,94,0.12)] hover:border-rose-500/40",
+        };
+      case "orange":
+        return {
+          borderAndBg: "border-orange-500/20 bg-gradient-to-b from-orange-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(249,115,22,0.03)] hover:shadow-[0_8px_32px_rgba(249,115,22,0.18),0_0_20px_rgba(249,115,22,0.12)] hover:border-orange-500/40",
+        };
+      case "turquoise":
+        return {
+          borderAndBg: "border-cyan-500/20 bg-gradient-to-b from-cyan-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(6,182,212,0.03)] hover:shadow-[0_8px_32px_rgba(6,182,212,0.18),0_0_20px_rgba(6,182,212,0.12)] hover:border-cyan-500/40",
+        };
+      case "fuchsia":
+        return {
+          borderAndBg: "border-fuchsia-500/20 bg-gradient-to-b from-fuchsia-500/[0.02] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(217,70,239,0.03)] hover:shadow-[0_8px_32px_rgba(217,70,239,0.18),0_0_20px_rgba(217,70,239,0.12)] hover:border-fuchsia-500/40",
+        };
+      case "platinum":
+        return {
+          borderAndBg: "border-white/10 bg-gradient-to-b from-white/[0.01] to-slate-950/50 backdrop-blur-xl",
+          shadow: "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_15px_rgba(255,255,255,0.02)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.12),0_0_20px_rgba(255,255,255,0.08)]",
+        };
+      default:
+        return {
+          borderAndBg: "border-white/[0.06] bg-slate-900/30",
+          shadow: "shadow-[0_4px_14px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.05)]",
+        };
+    }
+  }
+};
+
 export default function App() {
   // State
   const [user, setUser] = useState<string>(() => {
@@ -517,7 +744,12 @@ export default function App() {
       );
     });
 
-    // Sort to keep Pinned ones at the top, then by pinPosition (1, 2, 3...), then modified dates
+    const indexMap = new Map<string, number>();
+    templates.forEach((t, index) => {
+      indexMap.set(t.id, index);
+    });
+
+    // Sort to keep Pinned ones at the top, then by pinPosition (1, 2, 3...), and keep a stable order for others
     return [...filtered].sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
@@ -528,7 +760,9 @@ export default function App() {
           return aPos - bPos;
         }
       }
-      return b.modified - a.modified;
+      const aIndex = indexMap.get(a.id) ?? 0;
+      const bIndex = indexMap.get(b.id) ?? 0;
+      return aIndex - bIndex;
     });
   };
 
@@ -1234,10 +1468,19 @@ export default function App() {
           <AnimatePresence mode="popLayout">
             {getFilteredTemplates().map((tpl) => {
               const isSelected = selectedIds.has(tpl.id);
+              const colorConfig = CARD_COLORS.find((col) => col.id === tpl.color) || CARD_COLORS[0];
+              const isActive = tpl.id === activeCardId;
+              const cardStyles = getCardColorStyles(tpl.color, isActive);
+              const borderAndBgClass = isSelected
+                ? "border-teal-500/70 bg-teal-500/[0.01]"
+                : cardStyles.borderAndBg;
+              const shadowClass = isSelected
+                ? "shadow-[0_0_25px_rgba(20,184,166,0.25)] border-teal-500/40"
+                : cardStyles.shadow;
 
               return (
                 <motion.article
-                  layout
+                  layout={isActive ? false : "position"}
                   initial={{ opacity: 0, scale: 0.8, y: 25 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: -25 }}
@@ -1251,15 +1494,9 @@ export default function App() {
                   key={tpl.id}
                   id={tpl.id}
                   onPointerDown={() => setActiveCardId(tpl.id)}
-                  className={`group relative flex flex-col justify-between bg-slate-900/30 border rounded-2xl min-h-[220px] transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl ${
-                    isSelected
-                      ? "border-teal-500/70 bg-teal-500/[0.01]"
-                      : tpl.id === activeCardId
-                      ? "border-white/15 bg-white/[0.01]"
-                      : "border-white/[0.06]"
-                  } ${tpl.locked ? "opacity-90 grayscale-[15%]" : ""} focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:shadow-[0_0_20px_rgba(99,102,241,0.45),inset_0_0_15px_rgba(45,212,191,0.45)]`}
+                  className={`group relative flex flex-col justify-between border rounded-2xl min-h-[220px] transition-all duration-500 hover:-translate-y-1 ${shadowClass} ${borderAndBgClass} ${tpl.locked ? "opacity-90 grayscale-[15%]" : ""} ${colorConfig.focusRing}`}
                 >
-                  
+
                   {/* Indicators (Pinned / Locked) are now placed inline next to title to guarantee zero overlap with the COPY button */}
 
                   {/* CARD BODY CONTENT */}
@@ -1436,11 +1673,15 @@ export default function App() {
                       <textarea
                         ref={(el) => {
                           if (el) {
-                            const prevScrollTop = window.scrollY || document.documentElement.scrollTop;
-                            el.style.height = "auto";
-                            el.style.height = `${el.scrollHeight}px`;
-                            if (document.documentElement.scrollTop !== prevScrollTop) {
-                              document.documentElement.scrollTop = prevScrollTop;
+                            // Only set height initially or if values update from outside
+                            const isFocused = document.activeElement === el;
+                            if (!el.style.height) {
+                              el.style.height = `${el.scrollHeight}px`;
+                            } else if (!isFocused) {
+                              const expectedHeight = `${el.scrollHeight}px`;
+                              if (el.style.height !== expectedHeight) {
+                                el.style.height = expectedHeight;
+                              }
                             }
                           }
                         }}
@@ -1454,13 +1695,9 @@ export default function App() {
                           );
                           saveAndSetTemplates(updated);
 
-                          // Handle auto-expansion in UI immediately for focused textarea
-                          const prevScrollTop = window.scrollY || document.documentElement.scrollTop;
+                          // Handle auto-expansion in UI immediately for focused textarea with clean height adaptation
                           e.target.style.height = "auto";
                           e.target.style.height = `${e.target.scrollHeight}px`;
-                          if (document.documentElement.scrollTop !== prevScrollTop) {
-                            document.documentElement.scrollTop = prevScrollTop;
-                          }
                         }}
                         onBlur={() => {
                           if (tpl.locked) return;
@@ -1590,6 +1827,40 @@ export default function App() {
                               <RefreshCw size={11} />
                               <span>Vaciar contenido</span>
                             </button>
+
+                            {/* COLOR IDENTIFICADOR ROW */}
+                            <div className="border-t border-white/5 my-1" />
+                            <div className="px-2.5 py-1.5 text-[9px] text-slate-500 flex flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
+                              <span className="font-bold tracking-wider text-slate-500 uppercase text-[8.5px]">Color distintivo:</span>
+                              <div className="flex flex-wrap items-center gap-1.5 mt-0.5 max-w-[165px]">
+                                {CARD_COLORS.map((col) => {
+                                  const isSelected = (!tpl.color && col.id === "default") || tpl.color === col.id;
+                                  return (
+                                    <button
+                                      key={col.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const updated = templates.map((t) =>
+                                          t.id === tpl.id ? { ...t, color: col.id === "default" ? undefined : col.id } : t
+                                        );
+                                        saveAndSetTemplates(updated);
+                                        showToast(`Color actualizado 👀`);
+                                      }}
+                                      className={`w-4 h-4 rounded-full transition-all flex items-center justify-center cursor-pointer relative hover:scale-125 hover:shadow-lg active:scale-90 ${col.dotColor} ${
+                                        isSelected
+                                          ? "ring-2 ring-teal-400 ring-offset-1 ring-offset-slate-950 scale-110 opacity-100"
+                                          : "opacity-60 hover:opacity-100"
+                                      }`}
+                                      title={`Color: ${col.label}`}
+                                    >
+                                      {isSelected && (
+                                        <span className="w-1.5 h-1.5 bg-slate-950 rounded-full" />
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
 
                             <div className="border-t border-white/5 my-1" />
 
