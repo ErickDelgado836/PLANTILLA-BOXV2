@@ -5,14 +5,14 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Rediseño de barra de scroll para que solo aparezca al pasar el cursor encima */
+/* Custom scrollbar class that only shows scrollbar on hover */
 .hover-scrollbar-x {
-  /* Para Firefox */
+  /* For Firefox */
   scrollbar-width: none;
-  -ms-overflow-style: none; /* Para Internet Explorer 10-11 */
+  -ms-overflow-style: none; /* For Internet Explorer 10-11 */
 }
 
-/* Para Chrome, Safari y Opera */
+/* For Chrome, Safari and Opera */
 .hover-scrollbar-x::-webkit-scrollbar {
   height: 0px;
   background: transparent;
@@ -20,12 +20,12 @@
 }
 
 .hover-scrollbar-x:hover {
-  /* Para Firefox al pasar el cursor */
+  /* For Firefox on hover */
   scrollbar-width: thin;
 }
 
 .hover-scrollbar-x:hover::-webkit-scrollbar {
-  height: 6px; /* Altura fina de la barra de scroll */
+  height: 6px; /* Subtle thin scrollbar height */
 }
 
 .hover-scrollbar-x::-webkit-scrollbar-track {
@@ -38,9 +38,42 @@
 }
 
 .hover-scrollbar-x:hover::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3); /* Slate-400 sutil */
+  background: rgba(148, 163, 184, 0.3); /* Slate-400 with default visibility */
 }
 
 .hover-scrollbar-x:hover::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 212, 191, 0.6); /* Color Turquesa cuando pasas el mouse directamente sobre la barra */
+  background: rgba(45, 212, 191, 0.6); /* Highlights in teal-400 on direct scrollbar hover */
+}
+
+/* Beautiful pulse highlight when clearing template content */
+@keyframes clearFlash {
+  0% {
+    box-shadow: 0 0 0 0px rgba(45, 212, 191, 0), inset 0 0 0px rgba(45, 212, 191, 0);
+    border-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(10, 10, 13, 0.6);
+  }
+  15% {
+    box-shadow: 0 0 25px 4px rgba(45, 212, 191, 0.35), inset 0 0 15px rgba(45, 212, 191, 0.15);
+    border-color: rgba(45, 212, 191, 0.65);
+    background-color: rgba(45, 212, 191, 0.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(45, 212, 191, 0), inset 0 0 0px rgba(45, 212, 191, 0);
+    border-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(10, 10, 13, 0.6);
+  }
+}
+
+.animate-clear-flash {
+  animation: clearFlash 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Seamless auto-resize height transition */
+.textarea-autoresize {
+  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+/* Snappy instantaneous height updates on focus to avoid keying delay or lag */
+.textarea-autoresize:focus {
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
