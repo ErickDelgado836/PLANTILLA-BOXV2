@@ -976,7 +976,7 @@ export default function App() {
                 )}
               </div>
               <p className="text-[11px] text-slate-400 font-medium">
-                Tus respuestas rápidas, con corrector y calculadora integradas.
+                Tus respuestas rápidas.
               </p>
             </div>
           </div>
