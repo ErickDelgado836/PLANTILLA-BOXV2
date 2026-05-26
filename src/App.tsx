@@ -1367,6 +1367,66 @@ export default function App() {
                         </AnimatePresence>
                       </div>
 
+                      {/* Strategic Quick Copy Action button at the absolute top of the card with zero-pop layout animation */}
+                      <AnimatePresence>
+                        {tpl.content && tpl.content.trim().length > 0 && (
+                          <motion.div
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ 
+                              width: 76, 
+                              opacity: 1,
+                              transition: {
+                                width: { type: "spring", stiffness: 350, damping: 25 },
+                                opacity: { duration: 0.15 }
+                              }
+                            }}
+                            exit={{ 
+                              width: 0, 
+                              opacity: 0,
+                              transition: {
+                                width: { type: "spring", stiffness: 350, damping: 28 },
+                                opacity: { duration: 0.12 }
+                              }
+                            }}
+                            className="overflow-hidden flex items-center shrink-0"
+                          >
+                            <div className="pl-1 flex items-center shrink-0">
+                              <motion.button
+                                initial={{ scale: 0.4, opacity: 0 }}
+                                animate={{ 
+                                  scale: 1, 
+                                  opacity: 1,
+                                  transition: {
+                                    type: "spring",
+                                    stiffness: 450,
+                                    damping: 14,
+                                    mass: 0.6
+                                  }
+                                }}
+                                exit={{ 
+                                  scale: 0.4, 
+                                  opacity: 0,
+                                  transition: {
+                                    duration: 0.1
+                                  }
+                                }}
+                                whileHover={{ scale: 1.05, y: -0.5 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCopyContent(tpl.content, e);
+                                }}
+                                className="w-[72px] h-6 rounded-lg text-[10px] font-black bg-teal-500 hover:bg-teal-400 active:bg-teal-300 text-slate-950 hover:shadow-[0_0_12px_rgba(45,212,191,0.45)] cursor-pointer flex items-center justify-center gap-1 select-none shadow-[0_2px_8px_rgba(0,0,0,0.4)] border border-teal-300/10 shrink-0"
+                                title="Copiar rápido al portapapeles"
+                              >
+                                <Copy size={11} className="stroke-[2.5]" />
+                                <span>COPIAR</span>
+                              </motion.button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
                     </div>
 
                     {/* Main editing textarea with auto-resizable styling helper */}
@@ -1425,16 +1485,6 @@ export default function App() {
                       {/* Toolbar Action Drawer */}
                       <div className="flex gap-1">
                         
-                        {/* Copy Action button */}
-                        <button
-                          onClick={(e) => handleCopyContent(tpl.content, e)}
-                          className="btn small !py-1 !px-2.5 !rounded-lg text-[10px] bg-slate-950/40 border border-white/5 hover:border-white/10 hover:text-white hover:bg-neutral-800 transition-all cursor-pointer flex items-center justify-center font-bold"
-                          title="Copiar rápido plantilla al portapapeles"
-                        >
-                          <Copy size={11} className="mr-0.5" />
-                          <span>Copiar</span>
-                        </button>
-
                         {/* Dropdown Options Indicator for more act */}
                         <div className="relative group/menu">
                           <button
