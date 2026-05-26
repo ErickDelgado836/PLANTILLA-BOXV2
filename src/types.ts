@@ -6,6 +6,7 @@ export interface Template {
   pinned: boolean;
   locked: boolean;
   pinPosition?: number;
+  color?: string;
 }
 
 export interface ShelfItem {
