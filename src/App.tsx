@@ -1246,7 +1246,7 @@ export default function App() {
                     stiffness: 320,
                     damping: 18,
                     mass: 0.8,
-                    layout: { type: "spring", stiffness: 350, damping: 25 }
+                    layout: { type: "spring", stiffness: 420, damping: 15, mass: 0.85 }
                   }}
                   key={tpl.id}
                   id={tpl.id}
@@ -1374,19 +1374,11 @@ export default function App() {
                       <textarea
                         ref={(el) => {
                           if (el) {
-                            const isFocused = document.activeElement === el;
-                            if (isFocused) {
-                              const prevScrollTop = window.scrollY || document.documentElement.scrollTop;
-                              el.style.height = "auto";
-                              el.style.height = `${el.scrollHeight}px`;
-                              if (document.documentElement.scrollTop !== prevScrollTop) {
-                                document.documentElement.scrollTop = prevScrollTop;
-                              }
-                            } else {
-                              const targetHeight = `${el.scrollHeight}px`;
-                              if (el.style.height !== targetHeight) {
-                                el.style.height = targetHeight;
-                              }
+                            const prevScrollTop = window.scrollY || document.documentElement.scrollTop;
+                            el.style.height = "auto";
+                            el.style.height = `${el.scrollHeight}px`;
+                            if (document.documentElement.scrollTop !== prevScrollTop) {
+                              document.documentElement.scrollTop = prevScrollTop;
                             }
                           }
                         }}
