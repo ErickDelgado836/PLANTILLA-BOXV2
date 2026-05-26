@@ -1260,28 +1260,7 @@ export default function App() {
                   } ${tpl.locked ? "opacity-90 grayscale-[15%]" : ""} focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:shadow-[0_0_20px_rgba(99,102,241,0.45),inset_0_0_15px_rgba(45,212,191,0.45)]`}
                 >
                   
-                  {/* Dynamic Subtle Pinned/Locked Top Indicators Tag */}
-                  <div className="absolute top-2 right-2 flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                    {tpl.pinned && (
-                      <span 
-                        onClick={(e) => handleTogglePin(tpl.id, e)}
-                        className={`py-1 px-1.5 rounded-md cursor-pointer flex items-center gap-1 text-[10px] font-bold border transition-all ${getPinPositionColors(tpl.pinPosition || 1).badge}`} 
-                        title={`Anclada en posición ${tpl.pinPosition || 1} - Haz clic para desanclar`}
-                      >
-                        <Pin size={11} className={getPinPositionColors(tpl.pinPosition || 1).iconColor} />
-                        <span className="leading-none text-[9px]">{tpl.pinPosition || 1}</span>
-                      </span>
-                    )}
-                    {tpl.locked && (
-                      <span 
-                        onClick={(e) => handleToggleLock(tpl.id, e)}
-                        className="p-1 hover:bg-white/5 rounded-md cursor-pointer text-amber-500" 
-                        title="Contenido bloqueado"
-                      >
-                        <Lock size={11} />
-                      </span>
-                    )}
-                  </div>
+                  {/* Indicators (Pinned / Locked) are now placed inline next to title to guarantee zero overlap with the COPY button */}
 
                   {/* CARD BODY CONTENT */}
                   <div className="p-5 flex-1 flex flex-col gap-3">
@@ -1365,6 +1344,29 @@ export default function App() {
                             </motion.div>
                           )}
                         </AnimatePresence>
+                      </div>
+
+                      {/* Dynamic Subtle Pinned/Locked Indicators - Inline inside header to prevent overlap with COPIAR */}
+                      <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity shrink-0">
+                        {tpl.pinned && (
+                          <span 
+                            onClick={(e) => handleTogglePin(tpl.id, e)}
+                            className={`py-0.5 px-1.5 rounded-md cursor-pointer flex items-center gap-0.5 text-[10px] font-extrabold border transition-all ${getPinPositionColors(tpl.pinPosition || 1).badge}`} 
+                            title={`Anclada en posición ${tpl.pinPosition || 1} - Haz clic para desanclar`}
+                          >
+                            <Pin size={10} className={getPinPositionColors(tpl.pinPosition || 1).iconColor} />
+                            <span className="leading-none text-[8.5px]">{tpl.pinPosition || 1}</span>
+                          </span>
+                        )}
+                        {tpl.locked && (
+                          <span 
+                            onClick={(e) => handleToggleLock(tpl.id, e)}
+                            className="p-1 hover:bg-white/5 rounded-md cursor-pointer text-amber-500" 
+                            title="Contenido bloqueado"
+                          >
+                            <Lock size={10} />
+                          </span>
+                        )}
                       </div>
 
                       {/* Strategic Quick Copy Action button at the absolute top of the card with zero-pop layout animation */}
